@@ -2,7 +2,7 @@
 include_once get_stylesheet_directory() . '/woocommerce-filter.php';
 
 function enqueue_custom_script() {
-    $asset_version = '1.0.5'; // Phiên bản của bạn
+	$js_version = '1.0.12';
     // Đảm bảo jQuery đã được tải
     wp_enqueue_script('jquery');
 
@@ -10,37 +10,49 @@ function enqueue_custom_script() {
         'slick-carousel',
         'https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css', 
         array(), 
-        $asset_version
+        $js_version
     );
 
     wp_enqueue_style(
         'slick-theme',
         'https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css',
         array('slick-carousel'),
-        $asset_version
+        $js_version
     );
     // Tải file custom.js của bạn
     wp_enqueue_script(
         'slick-carousel',
         'https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js', 
         array('jquery'), 
-        $asset_version, 
+        $js_version, 
         true
     );
     wp_enqueue_script(
         'custom-js', 
         get_stylesheet_directory_uri() . '/custom.js', 
         array('jquery', 'slick-carousel'), 
-        $asset_version, 
+        $js_version, 
         true
     );
 }
 add_action('wp_enqueue_scripts', 'enqueue_custom_script');
 
 function theme_enqueue_styles() {
-    wp_enqueue_style( 'child-style', get_stylesheet_directory_uri() . '/style.css', array( 'avada-stylesheet' ) );
+	
+	wp_enqueue_style(
+        'font-awesome',
+        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',
+    );
+	$css_version = '1.0.6';
+    // Enqueue stylesheet của child theme
+    wp_enqueue_style(
+        'child-style',
+        get_stylesheet_directory_uri() . '/style.css',
+		['font-awesome'],
+        $css_version
+    );
 }
-add_action( 'wp_enqueue_scripts', 'theme_enqueue_styles' );
+add_action('wp_enqueue_scripts', 'theme_enqueue_styles');
 
 function avada_lang_setup() {
 	$lang = get_stylesheet_directory() . '/languages';
@@ -55,18 +67,20 @@ function product_image_grid_4_shortcode() {
         return '';
     }
 
-    $images = [];
+    $images = $images_full = [];
 
     // Lấy ảnh đại diện sản phẩm
     if (has_post_thumbnail($product->get_id())) {
         $images[] = get_the_post_thumbnail_url($product->get_id(), 'large');
+        $images_full[] = get_the_post_thumbnail_url($product->get_id(), 'full');
     }
 
     // Lấy các ảnh từ product gallery
     $gallery_images = $product->get_gallery_image_ids();
     if (!empty($gallery_images)) {
         foreach (array_slice($gallery_images, 0, 3) as $image_id) {
-            $images[] = wp_get_attachment_image_url($image_id, 'full');
+            $images[] = wp_get_attachment_image_url($image_id, 'large');
+            $images_full[] = wp_get_attachment_image_url($image_id, 'full');
         }
     }
 
@@ -92,12 +106,12 @@ function product_image_grid_4_shortcode() {
 
     // Overlay với carousel ảnh lớn
     $output .= '
-    <div id="image-popup-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center;">
+    <div id="image-popup-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:center;">
         <div style="position:relative; max-width:90%; max-height:90%;">
-            <button id="popup-close-btn" style="position:absolute; top:-30px; right:0; background:#fff; border:none; padding:5px 10px; cursor:pointer;">Đóng</button>
+            <button id="popup-close-btn"><i class="fa fa-times"></i></button>
             <div class="popup-carousel">';
     
-    foreach ($images as $img_url) {
+    foreach ($images_full as $img_url) {
         $output .= '<div><img src="' . esc_url($img_url) . '" style="max-height:80vh; max-width:100%; margin: 0 auto; display:block;" /></div>';
     }
 

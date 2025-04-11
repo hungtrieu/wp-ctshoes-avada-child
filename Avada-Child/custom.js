@@ -1,13 +1,11 @@
-jQuery(document).ready(function ($) {
-    let slickInitialized = false;
-
-    // Khi người dùng click vào ảnh thumbnail
-    $('.custom-product-image-grid').on('click', '.popup-trigger', function () {
-        $('#image-popup-overlay').fadeIn();
-
-        // Khởi tạo slick carousel nếu chưa
+jQuery(window).load(function () {
+	let slickInitialized = false;
+  
+    jQuery('.custom-product-image-grid').on('click', '.popup-trigger', function () {
+        jQuery('#image-popup-overlay').css('display', 'flex').hide().fadeIn();
+		
         if (!slickInitialized) {
-            $('.popup-carousel').slick({
+            jQuery('.popup-carousel').slick({
                 infinite: true,
                 slidesToShow: 1,
                 slidesToScroll: 1,
@@ -15,15 +13,21 @@ jQuery(document).ready(function ($) {
                 arrows: true,
             });
             slickInitialized = true;
+        } else {
+            jQuery('.popup-carousel').slick('setPosition'); // cập nhật lại layout nếu đã init
         }
 
-        // Hiển thị đúng slide
-        const index = $(this).data('index');
-        $('.popup-carousel').slick('slickGoTo', index);
+        const index = jQuery(this).data('index');
+        jQuery('.popup-carousel').slick('slickGoTo', index);
     });
 
-    // Đóng popup
-    $('#popup-close-btn').on('click', function () {
-        $('#image-popup-overlay').fadeOut();
+    jQuery('#popup-close-btn').on('click', function () {
+        jQuery('#image-popup-overlay').fadeOut();
+    });
+
+    jQuery('#image-popup-overlay').on('click', function (e) {
+        if (e.target === this) {
+            jQuery('#image-popup-overlay').fadeOut();
+        }
     });
 });

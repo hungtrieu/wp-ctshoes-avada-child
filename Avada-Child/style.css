@@ -4,6 +4,66 @@ Description: Child theme for Avada theme
 Author: ThemeFusion
 Author URI: https://theme-fusion.com
 Template: Avada
-Version: 1.0.5
+Version: 1.0.0
 Text Domain:  Avada
 */
+
+/* Định dạng nút prev/next của slick */
+#image-popup-overlay .slick-prev,
+#image-popup-overlay .slick-next {
+    width: 40px;
+    height: 40px;
+    background-color: none; 
+    border-radius: 50%;
+    z-index: 100;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-size: 24px;
+    line-height: 40px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+/* #image-popup-overlay .slick-prev:hover,
+#image-popup-overlay .slick-next:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+} */
+
+#image-popup-overlay .slick-prev {
+    left: 20px;
+	font-size: 0;
+}
+
+#image-popup-overlay .slick-next {
+    right: 20px;
+	font-size: 0;
+}
+
+/* Icon mũi tên (mặc định của slick là không có nội dung, có thể dùng CSS hoặc FontAwesome) */
+#image-popup-overlay .slick-prev::before,
+#image-popup-overlay .slick-next::before {
+    font-family: "slick";
+    font-size: 48px;
+    color: white;
+}
+
+/* Định dạng nút Đóng */
+#popup-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 18px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    z-index: 101;
+}
+
+#popup-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
