@@ -2,7 +2,7 @@
 include_once get_stylesheet_directory() . '/woocommerce-filter.php';
 
 function enqueue_custom_script() {
-	$js_version = '1.0.12';
+	$js_version = '1.0.20';
     // Đảm bảo jQuery đã được tải
     wp_enqueue_script('jquery');
 
@@ -43,7 +43,7 @@ function theme_enqueue_styles() {
         'font-awesome',
         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',
     );
-	$css_version = '1.0.6';
+	$css_version = '1.0.18';
     // Enqueue stylesheet của child theme
     wp_enqueue_style(
         'child-style',
@@ -69,13 +69,11 @@ function product_image_grid_4_shortcode() {
 
     $images = $images_full = [];
 
-    // Lấy ảnh đại diện sản phẩm
     if (has_post_thumbnail($product->get_id())) {
         $images[] = get_the_post_thumbnail_url($product->get_id(), 'large');
         $images_full[] = get_the_post_thumbnail_url($product->get_id(), 'full');
     }
 
-    // Lấy các ảnh từ product gallery
     $gallery_images = $product->get_gallery_image_ids();
     if (!empty($gallery_images)) {
         foreach (array_slice($gallery_images, 0, 3) as $image_id) {
@@ -89,35 +87,31 @@ function product_image_grid_4_shortcode() {
         return '';
     }
 
-    // Layout grid hiển thị ảnh thu nhỏ
-    $grid_style = $image_count === 1
-        ? 'width: 100%; max-width: 800px; margin: 0 auto;'
-        : 'display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;';
+    $container_class = $image_count === 1 ? 'single-image' : 'image-grid mobile-slider';
 
-    $output = '<div class="custom-product-image-grid" style="' . esc_attr($grid_style) . '">';
+    $output = '<div class="product-image-wrapper">';
+    $output .= '<div class="product-image-grid ' . esc_attr($container_class) . '">';
 
     foreach ($images as $index => $img_url) {
-        $output .= '<div class="product-image-item" style="text-align: center;">
-                        <img src="' . esc_url($img_url) . '" data-index="' . esc_attr($index) . '" class="popup-trigger" style="cursor:pointer; max-width:100%; height:auto;" />
+        $output .= '<div class="product-image-item">
+                        <img src="' . esc_url($img_url) . '" data-index="' . esc_attr($index) . '" class="popup-trigger" />
                     </div>';
     }
 
-    $output .= '</div>';
+    $output .= '</div></div>';
 
-    // Overlay với carousel ảnh lớn
+    // Overlay popup
     $output .= '
-    <div id="image-popup-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:center;">
-        <div style="position:relative; max-width:90%; max-height:90%;">
+    <div id="image-popup-overlay" style="display:none;">
+        <div class="popup-container">
             <button id="popup-close-btn"><i class="fa fa-times"></i></button>
             <div class="popup-carousel">';
-    
+
     foreach ($images_full as $img_url) {
-        $output .= '<div><img src="' . esc_url($img_url) . '" style="max-height:80vh; max-width:100%; margin: 0 auto; display:block;" /></div>';
+        $output .= '<div><img src="' . esc_url($img_url) . '" /></div>';
     }
 
-    $output .= '   </div>
-        </div>
-    </div>';
+    $output .= '</div></div></div>';
 
     return $output;
 }
